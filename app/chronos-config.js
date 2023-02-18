@@ -12,8 +12,10 @@ module.exports = {
 
   database: {
     connection: 'REST',
-    type: process.env.CHRONOS_DB,
-    URI: process.env.CHRONOS_URI,
+    // type: process.env.CHRONOS_DB,
+    type: 'MongoDB',
+    // URI: process.env.CHRONOS_URI,
+    URI: "mongodb+srv://snow:12345@cluster0.xppiw7c.mongodb.net/?retryWrites=true&w=majority",
   },
 
   notifications: [],
