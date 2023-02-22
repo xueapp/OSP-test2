@@ -13,17 +13,16 @@ services:
     image: mongo-express
     depends_on:
       - mongodb
-    restart: always # fixes MongoNetworkError when mongodb is not ready when mongo-express starts
+    restart: always 
     ports:
       - 8081:8081
     environment:
       - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
       - ME_CONFIG_MONGODB_ADMINPASSWORD=password
       - ME_CONFIG_MONGODB_SERVER=mongodb:27017
-  my-app:
-    # image: my-app:4.0
-    image: 161123922650.dkr.ecr.us-west-2.amazonaws.com/my-app:5.0
-    container_name: 'my-app'
+  ecs-test:
+    image: ecs-test:1.0
+    container_name: 'ecs-test'
     depends_on:
       - mongodb
       - mongo-express
