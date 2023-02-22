@@ -1,4 +1,4 @@
-FROM node:13-alpine
+FROM  --platform=linux/amd64 node:13-alpine
 
 ENV MONGO_DB_USERNAME=admin \
     MONGO_DB_PWD=password
@@ -6,6 +6,7 @@ ENV MONGO_DB_USERNAME=admin \
 RUN mkdir -p /home/app
 
 COPY ./app /home/app
+# COPY . .
 
 # set default dir so that next commands executes in /home/app dir
 WORKDIR /home/app
