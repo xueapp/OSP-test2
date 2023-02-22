@@ -44,9 +44,7 @@
 <script>
     (async function init() {
         const response = await fetch('/get-profile');
-        console.log("response", response);
         const user = await response.json();
-        console.log('===================',JSON.stringify(user));
 
         document.getElementById('name').textContent = user.name ? user.name : 'Anna Smith';
         document.getElementById('email').textContent = user.email ? user.email : 'anna.smith@example.com';
@@ -100,11 +98,11 @@
     <div class='container' id='container'>
         <h1>User profile</h1>
         <img src='profile-picture' alt="user-profile">
-        <span>Name: </span><h3 id='name'>Anna Smith</h3>
+        <span>Name: </span><h3 id='name'>Chronos Team</h3>
         <hr />
-        <span>Email: </span><h3 id='email'>anna.smith@example.com</h3>
+        <span>Email: </span><h3 id='email'>hello@chronos.com</h3>
         <hr />
-        <span>Interests: </span><h3 id='interests'>coding</h3>
+        <span>Shoutout: </span><h3 id='interests'>Chronos Team rocks!!!</h3>
         <hr />
         <button class='button' onclick="updateProfile()">Edit Profile</button>
     </div>
@@ -115,7 +113,7 @@
         <hr />
         <span>Email: </span><label for='input-email'></label><input type="email" id='input-email' value='anna.smith@example.com' />
         <hr />
-        <span>Interests: </span><label for='input-interests'></label><input type="text" id='input-interests' value='coding' />
+        <span>Shoutout: </span><label for='input-interests'></label><input type="text" id='input-interests' value='coding' />
         <hr />
         <button class='button' onclick="handleUpdateProfileRequest()">Update Profile</button>
     </div>

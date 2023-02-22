@@ -1,70 +1,55 @@
-## demo app - developing with Docker
+## ECS Test CASE
 
-This demo app shows a simple user profile app set up using 
-- index.html with pure js and css styles
-- nodejs backend with express module
-- mongodb for data storage
+ECS clustter is deployed with following process:
+- build Docker Image 
+- upload to Docker hub or ECR 
+- update docker-compose file
+- create and use docker context
+- deploy application
 
-All components are docker-based
+### If want to install Chronos as dependency 
 
-### With Docker
+1: add a `.env` file to the *server* folder that contains the following key/value pairs:
+- `CHRONOS_DB`: `MongoDB` or `PostgreSQL`
+- `CHRONOS_URI`: The URI to the desired MongoDB or PostgreSQL database to save health metrics via **Chronos**
 
-#### To start the application
+2: Then look at the `package.json` file in the server folder and note how `@chronosmicro/tracker` is included as a dependency:
+- If the @chronosmicro/tracker dependency is listed as a remote npm package (i.e. `"@chronosmicro/tracker": "^8.0.1"`), no further work is needed.
 
-Step 1: Create docker network
+- If the @chronosmicro/tracker dependency is listed as a local npm package (i.e. `"@chronosmicro/tracker": "file:./chronos_npm_package"`), the Docker build will require that the the Chronos code is in this folder. Copy the _chronos_npm_package_ folder in manually.
 
-    docker network create mongo-network 
+### Deploy application in ECS
 
-Step 2: start mongodb 
-
-    docker run -d -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=password --name mongodb --net mongo-network mongo    
-
-Step 3: start mongo-express
+Step 1: build Docker Image 
+```
+docker build -t ecs-test:1.0 .
+```
+* If you want to change name and/or tag of docker image, please make sure to update docker-compose.yaml file accordingly. And do Not miss the . at the end as it denotes location of the Dockerfile
     
-    docker run -d -p 8081:8081 -e ME_CONFIG_MONGODB_ADMINUSERNAME=admin -e ME_CONFIG_MONGODB_ADMINPASSWORD=password --net mongo-network --name mongo-express -e ME_CONFIG_MONGODB_SERVER=mongodb mongo-express   
-
-_NOTE: creating docker-network in optional. You can start both containers in a default network. In this case, just emit `--net` flag in `docker run` command_
-
-Step 4: open mongo-express from browser
-
-    http://localhost:8081
-
-Step 5: create `user-account` _db_ and `users` _collection_ in mongo-express
-
-Step 6: Start your nodejs application locally - go to `app` directory of project 
-
-    npm install 
-    node server.js
-    
-Step 7: Access you nodejs application UI from browser
-
-    http://localhost:3000
-
-### With Docker Compose
-
-#### To start the application
-
-Step 1: start mongodb and mongo-express
-
+Step 2: docker-compose to test out image (image is stored locally right now)
+``` 
     docker-compose -f docker-compose.yaml up
+```
+Step 3: Upload image to docker hub or ECR, update docker-compose.yaml with new URI of image
+- you only need to update the image for ecs-test, mongo and mongo-express are pulled from docker public library
     
-_You can access the mongo-express under localhost:8080 from your browser_
-    
-Step 2: in mongo-express UI - create a new database "my-db"
+Step 4: Set up AWS account, grant access to floowing AWS IAM permissions listed [here](https://docs.docker.com/cloud/ecs-integration/#requirements). Some other permissions you would need includes:
+* iam:DeleteRolePolicy
+* iam:PutRolePolicy
+* ecr:GetAuthorizationToken
+* logs:TagResource
+* elasticfilesystem:CreateFileSystem
 
-Step 3: in mongo-express UI - create a new collection "users" in the database "my-db"       
-    
-Step 4: start node server 
+If you push docker image in ECR you might need additional permission as well.   
 
-    npm install
-    node server.js
-    
-Step 5: access the nodejs application from browser 
+Step 5: Generate access key in IAM -> Users -> yourusername -> secureity credentials -> Access Keys. _Make sure you save your secret access key as it is only accessible once when generated._
 
-    http://localhost:3000
+Step 6: Create and use AWS context, follow instruction [here](https://docs.docker.com/cloud/ecs-integration/#requirements). 
 
-#### To build a docker image from the application
+Step 7: Deploy test application in ECS
+```
+    docker compose up
+```
+### some notes about the ecs-test
 
-    docker build -t my-app:1.0 .       
-    
-The dot "." at the end of the command denotes location of the Dockerfile.
+The way deployment set up is using Fargate, you will not be able to see graph in cluster->metrics. Instead, check inside services or cloudwatch. The ultimate visulization is in Chronos!!!

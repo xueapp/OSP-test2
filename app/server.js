@@ -11,18 +11,6 @@ const chronos = new Chronos(chronosConfig);
 chronos.propagate();
 app.use('/', chronos.track());
 
-// let mongoose = require('mongoose');
-
-// let mongoUrlLocal = "mongodb://admin:password@localhost:27017";
-// mongoose.connect(mongoUrlLocal, {
-//   // options for the connect method to parse the URI
-//   useNewUrlParser: true,
-//   useUnifiedTopology: true,
-//   // sets the name of the DB that our collections are part of
-//   dbName: 'user-account'
-// })
-//   .then(() => console.log('Connected to Mongo DB.'))
-//   .catch(err => console.log(err));
 
 app.use(bodyParser.urlencoded({
   extended: true
@@ -35,6 +23,7 @@ app.get('/', function (req, res) {
 
 app.get('/profile-picture', function (req, res) {
   let img = fs.readFileSync(path.join(__dirname, "images/profile-1.jpg"));
+
   res.writeHead(200, {'Content-Type': 'image/jpg' });
   res.end(img, 'binary');
 });
@@ -44,14 +33,11 @@ let mongoUrlLocal = "mongodb://admin:password@localhost:27017";
 
 // use when starting application as docker container
 let mongoUrlDocker = "mongodb://admin:password@mongodb:27017?authMode=scram-sha1";
-// let mongoUrlDocker = "mongodb://mongodb:27017";
 
-// pass these options to mongo client connect request to avoid DeprecationWarning for current Server Discovery and Monitoring engine
 let mongoClientOptions = { useNewUrlParser: true, useUnifiedTopology: true };
 
-// "user-account" in demo with docker. "my-db" in demo with docker-compose
+// "user-account" with docker. "my-db" with docker-compose
 let databaseName = "my-db";
-// let databaseName = "user-account";
 
 app.post('/update-profile', function (req, res) {
   let userObj = req.body;
