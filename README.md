@@ -7,7 +7,7 @@ ECS clustter is deployed with following process:
 - create and use docker context
 - deploy application
 
-### If want to install Chronos as dependency 
+### If want to install Chronos as dependency (optional)
 
 1: add a `.env` file to the *server* folder that contains the following key/value pairs:
 - `CHRONOS_DB`: `MongoDB` or `PostgreSQL`
